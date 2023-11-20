@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<!--
+ @license
+ Copyright 2019 Google LLC. All Rights Reserved.
+ SPDX-License-Identifier: Apache-2.0
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Take-Home-Exercise 03: Public API and googleMap</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <script type="module" src="./index.js"></script>
+    <style>
+        /* Set the size of the div element that contains the map */
+        #map {
+            height: 400px; /* The height is 400 pixels */
+            width: 100%; /* The width is the width of the web page */
+            background-color: grey;
+        }
+    </style>
+    <script>
+      $(document).ready(function(){
+          $("button").click(function(){
+              // alert('Clicked.')
+          
+              const ls_cityname = $("#ip_cityname").val();
+                // "#id_name" -> id="id_name"
+              const opt_terminal = $('input[name=termin]:checked').val();
+                // "Server" or "local"
+              var c_url = ""
+              if (opt_terminal === 'server')
+              {
+                c_url = "http://localhost:3000/map/"+ls_cityname
+                $.get(c_url, function(data, status){
+                  alert("Status: " + status + "\nResult: " + data.data)
+                  alert(data)
+              })
+              }
+              else //if (opt_terminal === 'local')
+              {
+                const using_api = "https://geocode.xyz/"
+                c_url = using_api + ls_cityname + '?json=1&callback=city_info'
+                $.ajax({
+                  url: using_api,
+                  data:{
+                    locate: ls_cityname,
+                    json: '1'
+                  }
+                }).done(function(data) {
+                  console.log(data)
+                });
+              }
+              
+          });
+      });
+    </script>
+  </head>
+
+  <body>
+    <h3>Forward Geocoding - No GoogleMap Version</h3>
+    <p>City ==> Location with latt & longt</p>
+    <div>
+      <div>
+        <label for="ip_cityname">Operand1:</label>
+        <input id="ip_cityname" type="text" name="loc_cityname" value="Heidelberg"/><br/>
+      </div>
+
+      <fieldset>
+        <legend> Terminal:</legend>
+        <div>
+            <input type="radio" id="loc_front" name="termin" value="local"/>
+            <label for="loc_front">Local</label>
+        </div>
+        <div>
+            <input type="radio" id="loc_end" name="termin" value="server" checked="checked"/>
+            <label for="loc_end">Server</label>
+        </div>
+      </fieldset>
+
+    <button id="loc_locate" onclick="">Locate!</button>
+    </div>
+
+    
+  </body>
+</html>
+
+
+
+<script>
+/* 
+ * Optional: Makes the sample page fill the window. 
+ * /
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+*/
+</script>

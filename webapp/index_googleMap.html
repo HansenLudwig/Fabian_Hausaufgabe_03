@@ -1,0 +1,110 @@
+<!doctype html>
+<!--
+ @license
+ Copyright 2019 Google LLC. All Rights Reserved.
+ SPDX-License-Identifier: Apache-2.0
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Take-Home-Exercise 03: Public API and googleMap</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <script type="module" src="./index.js"></script>
+    <style>
+        /* Set the size of the div element that contains the map */
+        #map {
+            height: 400px; /* The height is 400 pixels */
+            width: 100%; /* The width is the width of the web page */
+            background-color: grey;
+        }
+    </style>
+    <script>
+      $(document).ready(function(){
+          $("button").click(function(){
+              // alert('Clicked.')
+          
+              const opter = $('input[name=operator]:checked').val();
+              const op1 = $("#calc_op1").val();
+              const c_url = "http://localhost:3001/"+opter+'?operand1='+op1+'&operand2='+op2
+              $.get(c_url, function(data, status){
+                  alert("Status: " + status + "\nResult: " + data.data)
+              });
+          });
+      });
+    </script>
+  </head>
+
+  <body>
+    <h3>Forward Geocoding - GoogleMap Version</h3>
+    <p>City -> Location with latt&longt</p>
+    <div>
+      <div>
+        <label for="calc_op1">Operand1:</label>
+        <input id="calc_op1" type="text" name="number1" value="Heidelberg"/><br/>
+      </div>
+
+      <fieldset>
+        <legend> Terminal:</legend>
+        <div>
+            <input type="radio" id="loc_front" name="termin" value="local"/>
+            <label for="loc_front">Local</label>
+        </div>
+        <div>
+            <input type="radio" id="loc_end" name="termin" value="server" checked="checked"/>
+            <label for="loc_end">Server</label>
+        </div>
+      </fieldset>
+
+    <button id="loc_locate" onclick="">Locate!</button>
+    </div>
+
+    <h3>Google Maps Demo</h3>
+    <!--The div element for the map -->
+    <div id="map"></div>
+    <script>
+        function initMap() {
+            let position = { lat: -25.344, lng: 131.031 };
+            let map = new google.maps.Map(
+                document.getElementById('map'), {zoom:4, center: position}
+            );
+            let marker = new google.maps.Marker({position:position, map:map})
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap">/*Leave key= as empty, for testing use.*/</script>
+    
+    <!--
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&callback=initMap"></script>
+    -->
+
+    <!-- prettier-ignore -->
+    <script>(g=>{
+            var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});
+            var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,
+            u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));
+            d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))}
+            )
+        ({
+            key: "AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg", 
+            v: "beta"
+        });
+    </script>
+  </body>
+</html>
+
+
+
+<script>
+/* 
+ * Optional: Makes the sample page fill the window. 
+ * /
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+*/
+</script>
