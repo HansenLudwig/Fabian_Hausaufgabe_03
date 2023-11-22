@@ -22,6 +22,30 @@
         }
     </style>
     <script>
+      function showResult(data)
+      {
+        if (data.status === '404') {
+          alert('Error:'+
+            '\n  description: '+ data.data.error.description+
+            '\n  code: '+ data.data.error.code)
+        }
+        else if (data.status === '403')
+        {
+          alert('Failed:'+
+            '\n  description: '+ 'Query refused by the server, too frequent.'+
+            '\n  Possible Solution: '+ 'Try to use DummySys on the server side.')
+        }
+        else
+        {
+          const sv_list = {'200':'geocode.xyz', '302':'dummy_server@localhost'}
+          const city_info = data.data
+          alert('Result from: '+ sv_list[data.status]+
+            '\n  City: '+ city_info.standard.city+
+            '\n  Country: '+ city_info.standard.countryname+
+            '\n  Location(longt, latt): ('+ city_info.longt+ ', '+ city_info.latt+ ')')
+        }
+      }
+
       $(document).ready(function(){
           $("button").click(function(){
               // alert('Clicked.')
@@ -35,8 +59,7 @@
               {
                 c_url = "http://localhost:3000/map/"+ls_cityname
                 $.get(c_url, function(data, status){
-                  alert("Status: " + status + "\nResult: " + data.data)
-                  alert(data)
+                  showResult(data)
               })
               }
               else //if (opt_terminal === 'local')
@@ -44,7 +67,7 @@
                 const using_api = "https://geocode.xyz/"
                 c_url = using_api + ls_cityname + '?json=1&callback=city_info'
                 $.ajax({
-                  url: using_api,
+                  url: c_url,
                   data:{
                     locate: ls_cityname,
                     json: '1'
@@ -61,7 +84,7 @@
 
   <body>
     <h3>Forward Geocoding - No GoogleMap Version</h3>
-    <p>City ==> Location with latt & longt</p>
+    <p>City ==> Location with longt & latt</p>
     <div>
       <div>
         <label for="ip_cityname">Operand1:</label>
