@@ -12,7 +12,7 @@
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 
     <link rel="stylesheet" type="text/css" href="./style.css" />
-    <script type="module" src="./index.js"></script>
+    <!-- <script type="module" src="./index.js"></script> -->
     <style>
         /* Set the size of the div element that contains the map */
         #map {
@@ -73,7 +73,10 @@
                     json: '1'
                   }
                 }).done(function(data) {
-                  console.log(data)
+                  if (data.elevation.length > 0)
+                    data.status = '403'
+                  showResult(data)
+                  //console.log(data)
                 });
               }
               
