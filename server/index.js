@@ -131,11 +131,13 @@ async function que_f(cityname, DummyS){
 
     if (DummySet === 'passive' || DummySet === 'off')
     {
-        api_res = await que_name2Loc(cityname)
-        api_return = await api_res.json()
+        api_return = await que_name2Loc(cityname)
+        //api_return = await api_res.json()
     }
     if (DummySet === 'active' || (DummySet === 'passive' && api_return.status==='403'))
-    api_return = await DummySys(cityname)
+    {
+        api_return = await DummySys(cityname)
+    }
     
     console.log("---\nStatus: ",api_return.status)
     console.log(api_return)
@@ -166,7 +168,7 @@ app.get('/', (req, res) => {
 
 app.get('/map/:cityname', (req, res) => {
     const req_city_name = req.params.cityname
-    que_f(req_city_name, 'active').then((api_return)=>{
+    que_f(req_city_name, 'passive').then((api_return)=>{
         const o_res = {'status': api_return.status, 'data':api_return}
         res.send(o_res);
     })

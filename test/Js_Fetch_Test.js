@@ -13,7 +13,7 @@ async function logMovies() {
 }
 */
 
-async function getCity(cityname) {
+async function que_name2Loc(cityname) {
     const using_api = "https://geocode.xyz/"
     const c_url = using_api + cityname + '?json=1'//'?json=1&callback=city_info'
 
@@ -21,14 +21,35 @@ async function getCity(cityname) {
     const response = await fetch(c_url)
     const rJS = await response.json()
 
-    console.log(rJS)
-    console.log(rJS.standard)
-    
+    if ("error" in rJS) {
+        // No such a city found
+        rJS.status = '404'
+    }
+    else if (rJS.elevation.length > 0)
+    {
+        // "Throttled! See geocode.xyz/pricing"
+        rJS.status = '403'
+    }
+    else
+    {
+        rJS.status = '200'
+    }
     return rJS
 }
 
-
-CITY = getCity('Shanghai').then((result)=>
+async function que_f(cityname)
 {
-    return result
+    var api_return = undefined
+    var api_res = undefined
+
+    api_return = await que_name2Loc(cityname)
+    //api_return = await api_res.json()
+
+    return api_return
+}
+
+que_f("Shanghai").then((CITY) => {
+    console.log("---\nStatus: ",CITY.status)
+    console.log(CITY)
 })
+

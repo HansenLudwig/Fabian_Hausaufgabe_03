@@ -65,7 +65,7 @@
               else //if (opt_terminal === 'local')
               {
                 const using_api = "https://geocode.xyz/"
-                c_url = using_api + ls_cityname + '?json=1&callback=city_info'
+                c_url = using_api //+ ls_cityname + '?json=1'
                 $.ajax({
                   url: c_url,
                   data:{
@@ -73,13 +73,13 @@
                     json: '1'
                   }
                 }).done(function(data) {
+                  var d_status = '200'
                   if (data.elevation.length > 0)
-                    data.status = '403'
-                  showResult(data)
+                    var d_status = '403'
+                  showResult({"status":d_status, "data":data})
                   //console.log(data)
                 });
               }
-              
           });
       });
     </script>
@@ -108,7 +108,9 @@
 
     <button id="loc_locate" onclick="">Locate!</button>
     </div>
-
+    <div>
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d83735.00525607463!2d8.327133892352606!3d49.01593235210942!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47970648a2e07809%3A0xb6fc55734cb7ee7f!2z5Y2h5bCU5pav6bKB5Y6E!5e0!3m2!1szh-CN!2sde!4v1700732888972!5m2!1szh-CN!2sde" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
     
   </body>
 </html>
