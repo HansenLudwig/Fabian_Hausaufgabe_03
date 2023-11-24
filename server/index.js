@@ -30,7 +30,11 @@ async function que_name2Loc(cityname){
     const using_api = "https://geocode.xyz/"
     const c_url = using_api + cityname + '?json=1'
 
-    const response = await fetch(c_url)
+    const response = await fetch(c_url
+    ).catch( (err) => {
+        console.log(err)
+        return {status: '500', description: 'Fetch failed, Req cannot be done.'} 
+    })
     const rJS = await response.json()
 
     if ("error" in rJS) {
@@ -139,7 +143,7 @@ async function que_f(cityname, DummyS){
         api_return = await DummySys(cityname)
     }
     
-    console.log("---\nStatus: ",api_return.status)
+    console.log("---\nStatus: ",api_return.status, '; City: ', cityname)
     console.log(api_return)
     return api_return
 }

@@ -7,9 +7,20 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="../style.css">
     <title>Take-Home-Exercise 03: Public API and googleMap</title>
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+      <!-- Make sure you put this AFTER Leaflet's CSS -->
+     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+         crossorigin=""></script>
+    <!-- End of -Leaflet- -->
 
     <link rel="stylesheet" type="text/css" href="./style.css" />
     <!-- <script type="module" src="./index.js"></script> -->
@@ -22,7 +33,7 @@
         }
     </style>
     <script>
-      function showResult(data)
+      function showResult(data, map, alarm_result=false)
       {
         if (data.status === '404') {
           alert('Error:'+
@@ -35,15 +46,40 @@
             '\n  description: '+ 'Query refused by the server, too frequent.'+
             '\n  Possible Solution: '+ 'Try to use DummySys on the server side.')
         }
+        else if (data.status === '500')
+        {
+          alert('Failed:'+
+            '\n  description: '+ 'Fetch failed. Query cannot be done.'+
+            '\n  Possible Solution: '+ 'Try again later.')
+        }
         else
         {
           const sv_list = {'200':'geocode.xyz', '302':'dummy_server@localhost'}
           const city_info = data.data
-          alert('Result from: '+ sv_list[data.status]+
-            '\n  City: '+ city_info.standard.city+
-            '\n  Country: '+ city_info.standard.countryname+
-            '\n  Location(longt, latt): ('+ city_info.longt+ ', '+ city_info.latt+ ')')
+          if(alarm_result)
+          {
+            alert('Result from: '+ sv_list[data.status]+
+              '\n  City: '+ city_info.standard.city+
+              '\n  Country: '+ city_info.standard.countryname+
+              '\n  Location(longt, latt): ('+ city_info.longt+ ', '+ city_info.latt+ ')');
+          }
+          var city_coord = [city_info.latt, city_info.longt];
+
+          map.off();
+          map.remove();
+          map = L.map('map').setView(city_coord, 13);
+
+          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom:19,
+                attribution:'&copy; <ahref="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+
+          var marker = L.marker(city_coord).addTo(map);
+          marker.bindPopup("<b>"+city_info.standard.city+"</b><br>"+
+            "  Country: "+city_info.standard.countryname+"<br>"+
+            "  Result from: " +sv_list[data.status]); 
         }
+        return map;
       }
 
       $(document).ready(function(){
@@ -59,7 +95,7 @@
               {
                 c_url = "http://localhost:3000/map/"+ls_cityname
                 $.get(c_url, function(data, status){
-                  showResult(data)
+                  map = showResult(data, map)
               })
               }
               else //if (opt_terminal === 'local')
@@ -76,7 +112,7 @@
                   var d_status = '200'
                   if (data.elevation.length > 0)
                     var d_status = '403'
-                  showResult({"status":d_status, "data":data})
+                  map = showResult({"status":d_status, "data":data}, map)
                   //console.log(data)
                 });
               }
@@ -108,9 +144,22 @@
 
     <button id="loc_locate" onclick="">Locate!</button>
     </div>
-    <div>
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d83735.00525607463!2d8.327133892352606!3d49.01593235210942!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47970648a2e07809%3A0xb6fc55734cb7ee7f!2z5Y2h5bCU5pav6bKB5Y6E!5e0!3m2!1szh-CN!2sde!4v1700732888972!5m2!1szh-CN!2sde" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
+    <div id="map"></div>
+    <script>
+      const city_coord = [49.46525, 8.66408]
+      var map = L.map('map').setView(city_coord, 18);
+
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom:19,
+            attribution:'&copy; <ahref="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+      var marker = L.marker(city_coord).addTo(map);
+      marker.bindPopup("<b>"+'DSC-GmbH'+"</b><br>"+
+        "  Country: Deutschland<br>"+
+        "  Result from: Deafault Setting"); 
+    </script>
+    
     
   </body>
 </html>
